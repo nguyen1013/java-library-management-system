@@ -1,12 +1,12 @@
 public class Magazine extends LibraryItem{
-    private final int issue;
+    private final String issue;
 
-    public Magazine(int id, int issue){
+    public Magazine(int id, String issue){
         super(id);
         this.issue = issue;
     }
 
-    public int getIssue(){
+    public String getIssue(){
         return this.issue;
     }
 
