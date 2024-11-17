@@ -21,5 +21,3 @@ If you would like to contribute to this project, feel free to fork the repositor
 
 ## Contact
 For any questions or feedback, please reach out via the repository's issues page.
-
-Happy playing! 🎮
