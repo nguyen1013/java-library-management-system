@@ -4,31 +4,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LibraryManager {
-    private static JFrame frame = new JFrame("Library Manager");
-    private static JPanel panel = new JPanel(); // main panel
-    private static JPanel leftPanel = new JPanel(); // list items panel
-    private static JPanel rightPanel = new JPanel(); // buttons panel
-    private static JPanel listItemsPanel = new JPanel(); // list of available items
-
-    private static JLabel label = new JLabel("Library Management System");
-    private static JLabel listOfItemsLabel = new JLabel("Library Management System");
-
     public static int idCounter = 0;
-
-    private static List<LibraryItem> bookItems = new ArrayList<>();
-    private static List<LibraryItem> magazineItems = new ArrayList<>();
-    private static List<LibraryItem> availableBookItems = new ArrayList<>();
-    private static List<LibraryItem> availableMagazineItems = new ArrayList<>();
-    private static List<LibraryItem> availableItems = new ArrayList<>();
-    private static List<LibraryItem> selectedItems = new ArrayList<>();
+    private static final JPanel listItemsPanel = new JPanel(); // list of available items
+    private static final List<LibraryItem> bookItems = new ArrayList<>();
+    private static final List<LibraryItem> magazineItems = new ArrayList<>();
+    private static List<LibraryItem> availableItems = new ArrayList<>(); // to store available items for displaying in the list
+    private static final List<LibraryItem> selectedItems = new ArrayList<>(); // to store selected checkbox items for borrowing or removing
 
     public LibraryManager() {
+        JFrame frame = new JFrame("Library Manager");
+        JLabel label = new JLabel("Library Management System");
         label.setHorizontalAlignment(SwingConstants.CENTER);
         label.setFont(new Font("Arial", Font.BOLD, 24));
 
-        panel.setLayout(new GridLayout(1, 2, 10, 10));
-        panel.add(leftPanel);
-        panel.add(rightPanel);
+        JLabel listOfItemsLabel = new JLabel("List of available items");
+        listOfItemsLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        listOfItemsLabel.setFont(new Font("Arial", Font.BOLD, 18));
 
         JPanel buttonsPanel = new JPanel();
         buttonsPanel.setSize(150, 180);
@@ -38,18 +29,20 @@ public class LibraryManager {
         buttonsPanel.add(createButtons("Borrow item"));
         buttonsPanel.add(createButtons("Remove item"));
 
+        JPanel leftPanel = new JPanel(); // list items panel
+        JPanel rightPanel = new JPanel(); // contain buttons panel
         rightPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 80));
         rightPanel.add(buttonsPanel);
 
         leftPanel.setLayout(new BorderLayout());
+        listItemsPanel.setLayout(new FlowLayout());
         leftPanel.add(listOfItemsLabel, BorderLayout.NORTH);
         leftPanel.add(listItemsPanel, BorderLayout.CENTER);
 
-        listOfItemsLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        listOfItemsLabel.setFont(new Font("Arial", Font.BOLD, 18));
-
-        listItemsPanel.setLayout(new FlowLayout());
-
+        JPanel panel = new JPanel(); // main panel
+        panel.setLayout(new GridLayout(1, 2, 10, 10));
+        panel.add(leftPanel);
+        panel.add(rightPanel);
 
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(800, 600);
@@ -61,59 +54,8 @@ public class LibraryManager {
         frame.setVisible(true);
     }
 
-
     public static void main(String[] args) {
-        LibraryManager libraryManager = new LibraryManager();
-
-    }
-
-    public static void addItem() {
-        idCounter++;
-        int id = idCounter;
-        String[] options = {"Book", "Magazine"};
-        String selectedItem = (String) JOptionPane.showInputDialog(null, "Choose item type", "Add item", JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-        if (selectedItem.equals("Book")) {
-            String title = JOptionPane.showInputDialog("Enter book title");
-            Book book = new Book(id, title);
-            addLibraryItem(book);
-        } else if (selectedItem.equals("Magazine")) {
-            String issue = JOptionPane.showInputDialog("Enter magazine issue");
-            Magazine magazine = new Magazine(id, issue);
-            addLibraryItem(magazine);
-        }
-    }
-
-    public static void updateItems() {
-        selectedItems.forEach((item)->{
-            item.borrowItem();
-        });
-
-    }
-
-    public static void removeItem() {
-        selectedItems.forEach((item)->{
-            removeLibraryItem(item);
-        });
-    }
-
-    public static JButton createButtons(String text) {
-        JButton button = new JButton(text);
-        button.setPreferredSize(new Dimension(150, 40));
-        button.addActionListener((e)->{
-            if (text.equals("Add item")) {
-                addItem();
-            } else if (text.equals("Borrow item")) {
-                updateItems();
-            } else if (text.equals("Remove item")) {
-                removeItem();
-            }
-            listItemsPanel.removeAll();
-            updateAvailableItems();
-            displayItems(availableItems);
-            listItemsPanel.revalidate();
-            listItemsPanel.repaint();
-        });
-        return button;
+        new LibraryManager();
     }
 
     public static void addLibraryItem(LibraryItem item) {
@@ -135,8 +77,8 @@ public class LibraryManager {
     }
 
     public static void updateAvailableItems() {
-        availableBookItems = bookItems.stream().filter((item)->item.isAvailability()).toList();
-        availableMagazineItems = magazineItems.stream().filter((item)->item.isAvailability()).toList();
+        List<LibraryItem> availableBookItems = bookItems.stream().filter(LibraryItem::isAvailability).toList();
+        List<LibraryItem> availableMagazineItems = magazineItems.stream().filter(LibraryItem::isAvailability).toList();
         availableItems = new ArrayList<>();
         availableItems.addAll(availableBookItems);
         availableItems.addAll(availableMagazineItems);
@@ -157,4 +99,48 @@ public class LibraryManager {
         });
     }
 
+    public static void addItem() {
+        idCounter++;
+        int id = idCounter;
+        String[] options = {"Book", "Magazine"};
+        String selectedItem = (String) JOptionPane.showInputDialog(null, "Choose item type", "Add item", JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+        if (selectedItem.equals("Book")) {
+            String title = JOptionPane.showInputDialog("Enter book title");
+            Book book = new Book(id, title);
+            addLibraryItem(book);
+        } else if (selectedItem.equals("Magazine")) {
+            String issue = JOptionPane.showInputDialog("Enter magazine issue");
+            Magazine magazine = new Magazine(id, issue);
+            addLibraryItem(magazine);
+        }
+    }
+
+    public static void updateItems() {
+        selectedItems.forEach(LibraryItem::borrowItem);
+    }
+
+    public static void removeItem() {
+        selectedItems.forEach(LibraryManager::removeLibraryItem);
+    }
+
+    public static JButton createButtons(String text) {
+        JButton button = new JButton(text);
+        button.setPreferredSize(new Dimension(150, 40));
+        button.addActionListener((e)->{
+            switch (text) {
+                case "Add item" -> addItem();
+                case "Borrow item" -> updateItems();
+                case "Remove item" -> removeItem();
+            }
+            listItemsPanel.removeAll();
+            updateAvailableItems();
+            displayItems(availableItems);
+            listItemsPanel.revalidate();
+            listItemsPanel.repaint();
+//            System.out.println(bookItems);
+//            System.out.println(magazineItems);
+//            System.out.println(availableItems);
+        });
+        return button;
+    }
 }
