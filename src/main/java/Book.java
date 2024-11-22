@@ -1,7 +1,7 @@
 public class Book extends LibraryItem{
     private final String title;
 
-    public Book(int id, String title){
+    public Book(String id, String title){
         super(id);
         this.title = title;
     }

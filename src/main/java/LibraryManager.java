@@ -2,9 +2,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class LibraryManager {
-    public static int idCounter = 0;
     private static final JPanel listItemsPanel = new JPanel(); // list of available items
     private static final List<LibraryItem> bookItems = new ArrayList<>();
     private static final List<LibraryItem> magazineItems = new ArrayList<>();
@@ -100,8 +100,9 @@ public class LibraryManager {
     }
 
     public static void addItem() {
-        idCounter++;
-        int id = idCounter;
+        UUID uuid = UUID.randomUUID();
+        String id = uuid.toString();
+
         String[] options = {"Book", "Magazine"};
         String selectedItem = (String) JOptionPane.showInputDialog(null, "Choose item type", "Add item", JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
         if (selectedItem.equals("Book")) {
@@ -137,9 +138,10 @@ public class LibraryManager {
             displayItems(availableItems);
             listItemsPanel.revalidate();
             listItemsPanel.repaint();
-//            System.out.println(bookItems);
-//            System.out.println(magazineItems);
-//            System.out.println(availableItems);
+            System.out.println(bookItems);
+            System.out.println(magazineItems);
+            System.out.println(availableItems);
+            System.out.println();
         });
         return button;
     }

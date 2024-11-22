@@ -1,7 +1,7 @@
 public class Magazine extends LibraryItem{
     private final String issue;
 
-    public Magazine(int id, String issue){
+    public Magazine(String id, String issue){
         super(id);
         this.issue = issue;
     }

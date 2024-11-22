@@ -1,17 +1,15 @@
-
-
 abstract class LibraryItem {
-    private final int id;
+    private final String id;
     protected boolean availability;
     protected int dueToDate;
 
-    public LibraryItem(int id) {
+    public LibraryItem(String id) {
         this.id = id;
         this.availability = true;
         this.dueToDate = 0;
     }
 
-    public int getId(){
+    public String getId(){
        return this.id;
     }
 
